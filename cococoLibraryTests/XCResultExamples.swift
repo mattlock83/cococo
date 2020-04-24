@@ -15,5 +15,5 @@ struct XCResultExamples {
 	
 	static let example = testBundle.path(forResource: "Example", ofType: "xcresult")!
 	static let exampleResult = URL(fileURLWithPath: testBundle.path(forResource: "ExampleResult", ofType: "xml")!)
-	
+    static let legacyExample = testBundle.path(forResource: "action", ofType: "xccovarchive")!
 }

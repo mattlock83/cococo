@@ -20,12 +20,18 @@ class ConverterTests: XCTestCase {
     }
 	
 	func testExample() throws {
-        let result = try sut.convert([XCResultExamples.example], excludedFileExtensions: nil)
+        let result = try sut.convert([XCResultExamples.example], excludedFileExtensions: nil, ignoredPaths: nil, legacyMode: nil)
 		let expectedResult = try String(contentsOf: XCResultExamples.exampleResult)
 		XCTAssertEqual(result, expectedResult)
 	}
+
+    func testLegacyExample() throws {
+        let result = try sut.convert([XCResultExamples.legacyExample], excludedFileExtensions: nil, ignoredPaths: nil, legacyMode: true)
+        let expectedResult = try String(contentsOf: XCResultExamples.exampleResult)
+        XCTAssertEqual(result, expectedResult)
+    }
 	
-	func testExcludeSingleFilePaths() {
+	func testExcludeSingleFileExtension() {
 		let filePaths = [
 			"foo/bar/file1.swift",
 			"asdf/foo.h",
@@ -39,11 +45,11 @@ class ConverterTests: XCTestCase {
 			"asdf/foo.m",
 			"asdf/bar.m"
 		]
-		let resultingPaths = sut.filterFilePaths(filePaths, excludedFileExtensions: excludedFileExtensions)
+		let resultingPaths = sut.filterFileExtensions(filePaths, excludedFileExtensions: excludedFileExtensions)
 		XCTAssertEqual(resultingPaths, expectedPaths)
 	}
 	
-	func testExcludeMultipleFilePaths() {
+	func testExcludeMultipleFileExtensions() {
 		let filePaths = [
 			"foo/bar/file1.swift",
 			"asdf/foo.h",
@@ -56,8 +62,41 @@ class ConverterTests: XCTestCase {
 			"foo/bar/file1.swift",
 			"file2.swift",
 		]
-		let resultingPaths = sut.filterFilePaths(filePaths, excludedFileExtensions: excludedFileExtensions)
+		let resultingPaths = sut.filterFileExtensions(filePaths, excludedFileExtensions: excludedFileExtensions)
 		XCTAssertEqual(resultingPaths, expectedPaths)
 	}
+
+    func testExcludeSingleFilePaths() {
+        let filePaths = [
+            "foo/bar/file1.swift",
+            "asdf/foo.h",
+            "asdf/foo.m",
+            "asdf/bar.m",
+            "file2.swift"
+        ]
+        let excludedPaths = ["asdf/"]
+        let expectedPaths = [
+            "foo/bar/file1.swift",
+            "file2.swift"
+        ]
+        let resultingPaths = sut.filterFilePaths(filePaths, ignoredPaths: excludedPaths)
+        XCTAssertEqual(resultingPaths, expectedPaths)
+    }
+
+    func testExcludeMultipleFilePaths() {
+        let filePaths = [
+            "foo/bar/file1.swift",
+            "asdf/foo.h",
+            "asdf/foo.m",
+            "asdf/bar.m",
+            "file2.swift"
+        ]
+        let excludedPaths = ["asdf/","foo/bar"]
+        let expectedPaths = [
+            "file2.swift"
+        ]
+        let resultingPaths = sut.filterFilePaths(filePaths, ignoredPaths: excludedPaths)
+        XCTAssertEqual(resultingPaths, expectedPaths)
+    }
 
 }
