@@ -10,14 +10,16 @@ cococo is a command line tool to convert Xcode 11's code coverage data to [Sonar
 USAGE: cococo <xcresult> [-e <excluded-file-extension1> ...]
 
 OPTIONS:
-  --excluded, -e   Multiple file extensions which are excluded from processing
-  --help           Display available options
+  --excluded, -e        Multiple file extensions which are excluded from processing
+  --ignoredPaths, -i    Multiple file paths which are excluded from processing
+  --legacy, -l          Work with xccoverage files used by Xcode 11.3 and below
+  --help                Display available options
 ```
 
 ## Example
 Run the tool for a given `xcresult` archive, exclude `.h` and `.m` files from processing and save the result to `sonarqube-generic-coverage.xml`.
 ```
-cococo myproject.xcresult --excluded .h .m > sonarqube-generic-coverage.xml
+cococo myproject.xcresult --excluded .h .m --ignoredPaths DerivedData/SourcePackages/checkouts > sonarqube-generic-coverage.xml
 ```
 
 The Xcode 11's `xcresult` archive can be found in the derived data folder:

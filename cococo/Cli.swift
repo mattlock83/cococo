@@ -36,14 +36,31 @@ class Cli {
 				usage: "Multiple file extensions which are excluded from processing",
 				completion: ShellCompletion.none
 			)
+            let ignored = parser.add(
+                option: "--ignoredPaths",
+                shortName: "-i",
+                kind: [String].self,
+                strategy: .upToNextOption,
+                usage: "Multiple file paths which are excluded from processing",
+                completion: ShellCompletion.none
+            )
+            let legacy = parser.add(
+                option: "--legacy",
+                shortName: "-l",
+                kind: Bool.self,
+                usage: "Switches to legacy mode for parsing xccoverage files instead of xcresult",
+                completion: ShellCompletion.none
+            )
 			
 			let argsv = Array(CommandLine.arguments.dropFirst())
 			let parsedArguments = try parser.parse(argsv)
 			
 			let archivePaths = parsedArguments.get(archive) ?? []
 			let excludedFileExtensions = parsedArguments.get(excluded)
+            let ignoredPaths = parsedArguments.get(ignored)
+            let legacyMode = parsedArguments.get(legacy)
 			
-			let xml = try Converter().convert(archivePaths, excludedFileExtensions: excludedFileExtensions)
+            let xml = try Converter().convert(archivePaths, excludedFileExtensions: excludedFileExtensions, ignoredPaths: ignoredPaths, legacyMode: legacyMode)
 			io.print(xml)
 			
 		} catch ArgumentParserError.expectedValue(let value) {
